@@ -104,10 +104,14 @@ again:
 bool TcpSocket::Recv(const int cfd, std::string *buf)
 {
     char tmp[1024] = {0};
-    int ret = read(cfd, tmp, 1024);
+    int ret = recv(cfd, tmp, 1024, 0);
     if(ret < 0)
     {
         perror("read errror");
+        return false;
+    }else if(ret == 0)
+    {
+        std::cout << "connect shutdown" << std::endl;
         return false;
     }
     buf->assign(tmp, ret);
@@ -115,13 +119,18 @@ bool TcpSocket::Recv(const int cfd, std::string *buf)
     return true;
 }
 
-bool TcpSocket::Send(const int cdf, std::string &buf)
+bool TcpSocket::Send(const int cdf, const std::string &buf)
 {
-    int ret = write(cdf, buf.c_str(), buf.size());
-    if(ret < 0)
+    int total_len = 0;
+    while(total_len < (int)buf.size())
     {
-        perror("write error");
-        return false;
+        int ret = send(cdf, buf.c_str() + total_len, buf.size() - total_len, 0);
+        if(ret < 0)
+        {
+            perror("write error");
+            return false;
+        }
+        total_len += ret;
     }
 
     return true;

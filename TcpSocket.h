@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <unistd.h>
 #include <stdlib.h>
@@ -24,7 +25,7 @@ public:
     bool Connect(const std::string& ip, const u_int16_t port);
     bool Accpet(int* cfd, std::string* ip, u_int16_t* port);
     bool Recv(const int cfd, std::string* buf);
-    bool Send(const int cdf, std::string& buf);
+    bool Send(const int cdf, const std::string& buf);
     bool Close();
     int getSockfd();
 
